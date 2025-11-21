@@ -1,0 +1,186 @@
+[
+  {
+    "portfolio": "FR",
+    "products": [
+      {
+        "product": "SS",
+        "asins": [
+          {
+            "asin": "B0FRSS0001",
+            "total_sessions": 312,
+            "orders": 45,
+            "conversion_rate": 14.42,
+            "total_sales": 652.5
+          },
+          {
+            "asin": "B0FRSS0002",
+            "total_sessions": 120,
+            "orders": 20,
+            "conversion_rate": 16.67,
+            "total_sales": 300.0
+          },
+          {
+            "asin": "B0FRSS0003",
+            "total_sessions": 88,
+            "orders": 7,
+            "conversion_rate": 7.95,
+            "total_sales": 125.0
+          }
+        ]
+      },
+      {
+        "product": "1PC",
+        "asins": [
+          {
+            "asin": "B0FR1PC0001",
+            "total_sessions": 50,
+            "orders": 5,
+            "conversion_rate": 10.0,
+            "total_sales": 75.0
+          },
+          {
+            "asin": "B0FR1PC0002",
+            "total_sessions": 30,
+            "orders": 2,
+            "conversion_rate": 6.67,
+            "total_sales": 32.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "portfolio": "UK",
+    "products": [
+      {
+        "product": "2X",
+        "asins": [
+          {
+            "asin": "B0UK2X0001",
+            "total_sessions": 100,
+            "orders": 8,
+            "conversion_rate": 8.0,
+            "total_sales": 140.0
+          },
+          {
+            "asin": "B0UK2X0002",
+            "total_sessions": 45,
+            "orders": 4,
+            "conversion_rate": 8.89,
+            "total_sales": 65.0
+          }
+        ]
+      },
+      {
+        "product": "SS",
+        "asins": [
+          {
+            "asin": "B0UKSS0001",
+            "total_sessions": 300,
+            "orders": 35,
+            "conversion_rate": 11.67,
+            "total_sales": 570.0
+          },
+          {
+            "asin": "B0UKSS0002",
+            "total_sessions": 150,
+            "orders": 12,
+            "conversion_rate": 8.0,
+            "total_sales": 230.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "portfolio": "KSA",
+    "products": [
+      {
+        "product": "2PC",
+        "asins": [
+          {
+            "asin": "B0KSA2PC0001",
+            "total_sessions": 78,
+            "orders": 10,
+            "conversion_rate": 12.82,
+            "total_sales": 150.0
+          },
+          {
+            "asin": "B0KSA2PC0002",
+            "total_sessions": 66,
+            "orders": 5,
+            "conversion_rate": 7.58,
+            "total_sales": 95.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "portfolio": "SA-CA",
+    "products": [
+      {
+        "product": "2X",
+        "asins": [
+          {
+            "asin": "B0SACA2X0001",
+            "total_sessions": 11,
+            "orders": 1,
+            "conversion_rate": 9.09,
+            "total_sales": 22.0
+          },
+          {
+            "asin": "B0SACA2X0002",
+            "total_sessions": 18,
+            "orders": 2,
+            "conversion_rate": 11.11,
+            "total_sales": 34.0
+          }
+        ]
+      },
+      {
+        "product": "SS",
+        "asins": [
+          {
+            "asin": "B0SACASS0001",
+            "total_sessions": 240,
+            "orders": 27,
+            "conversion_rate": 11.25,
+            "total_sales": 490.0
+          },
+          {
+            "asin": "B0SACASS0002",
+            "total_sessions": 135,
+            "orders": 14,
+            "conversion_rate": 10.37,
+            "total_sales": 255.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "portfolio": "Liddles",
+    "products": [
+      {
+        "product": "1PC",
+        "asins": [
+          {
+            "asin": "B0LID1PC0001",
+            "total_sessions": 60,
+            "orders": 6,
+            "conversion_rate": 10.0,
+            "total_sales": 90.0
+          },
+          {
+            "asin": "B0LID1PC0002",
+            "total_sessions": 25,
+            "orders": 3,
+            "conversion_rate": 12.0,
+            "total_sales": 48.0
+          }
+        ]
+      }
+    ]
+  }
+]
