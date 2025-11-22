@@ -74,6 +74,14 @@ export const navData = [
         ],
       },
       {
+        title: 'Daily Checks',
+        path: paths.dashboard.dailies.root,
+        icon: ICONS.calendar,
+        children: [
+          { title: 'List', path: paths.dashboard.dailies.list },
+        ],
+      },
+      {
         title: 'Reports',
         path: paths.dashboard.reports.root,
         icon: ICONS.kanban,
@@ -88,14 +96,7 @@ export const navData = [
           { title: 'List', path: paths.dashboard.reports.list },
         ],
       },
-      {
-        title: 'Dailies',
-        path: paths.dashboard.dailies.root,
-        icon: ICONS.calendar,
-        children: [
-          { title: 'List', path: paths.dashboard.dailies.list },
-        ],
-      },
+    
     ],
   },
 ];

@@ -205,14 +205,14 @@ export function DailiesListView() {
 
   const renderHeader = () => (
     <CustomBreadcrumbs
-      heading="Dailies"
+      heading="Daily Checks"
       links={[
         {
           name: 'Dashboard',
           href: paths.dashboard.root,
         },
         {
-          name: 'Dailies',
+          name: 'Daily Checks',
           href: paths.dashboard.dailies.root,
         },
         { name: 'List' },
