@@ -60,5 +60,9 @@ export const paths = {
       weekly: `${ROOTS.DASHBOARD}/reports/weekly`,
       monthlyConversion: `${ROOTS.DASHBOARD}/reports/monthlyConversion`, // Updated path
     },
+    dailies: {
+      root: `${ROOTS.DASHBOARD}/dailies`,
+      list: `${ROOTS.DASHBOARD}/dailies/list`,
+    },
   },
 };

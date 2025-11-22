@@ -28,6 +28,9 @@ const MidweeklyPage = lazy(() => import('src/pages/dashboard/reports/midweekly')
 const WeeklyPage = lazy(() => import('src/pages/dashboard/reports/weekly')); // Get Page
 const MonthlyConversionPage = lazy(() => import('src/pages/dashboard/reports/monthlyConversion')); // Get Page
 
+// Dailies pages
+const DailiesListPage = lazy(() => import('src/pages/dashboard/dailies/list'));
+
 // ----------------------------------------------------------------------
 
 function SuspenseOutlet() {
@@ -71,6 +74,13 @@ export const dashboardRoutes = [
           { path: 'midweekly', element: <MidweeklyPage /> },
           { path: 'weekly', element: <WeeklyPage /> },
           { path: 'monthlyConversion', element: <MonthlyConversionPage /> },
+        ],
+      },
+      {
+        path: 'dailies',
+        children: [
+          { path: 'list', element: <DailiesListPage /> },
+          { element: <DailiesListPage />, index: true },
         ],
       },
     ],

@@ -46,6 +46,15 @@ export const endpoints = {
     midweeklyPortfolioMetrics: '/api/reports/midweekly-portfolio-grouped-metrics/',
     weeklyPortfolioMetrics: '/api/reports/weekly-portfolio-grouped-metrics/',
   },
+  // dailies endpoints
+  dailies: {
+    allPortfolioDailiesWithoutAsins: '/dailies/api/all-portfoliodailies-without-asins/',
+    portfolioDailiesWithAsins: (portfolioDailyId) => `/dailies/api/portfoliodailies-with-asins/${portfolioDailyId}/`,
+    portfolioDailyLogHistory: (portfolioDailyId, field) => `/dailies/api/portfoliodailies-log/${portfolioDailyId}/${field}/history/`,
+    portfolioDailyLogSave: (portfolioDailyId, field) => `/dailies/api/portfoliodailies-log/${portfolioDailyId}/${field}/save/`,
+    asinDailyLogHistory: (asinDailyId, field) => `/dailies/api/asindaily-log/${asinDailyId}/${field}/history/`,
+    asinDailyLogSave: (asinDailyId, field) => `/dailies/api/asindaily-log/${asinDailyId}/${field}/save/`,
+  },
   mail: {
     list: '/api/mail/list',
     details: '/api/mail/details',
