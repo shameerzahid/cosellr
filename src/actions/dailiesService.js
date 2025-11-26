@@ -87,16 +87,46 @@ export const fetchAsinDailyLogHistory = async (asinDailyId, field) => {
  * @param {number} asinDailyId - The ID of the ASIN daily record
  * @param {string} field - The checklist field name
  * @param {string} log - The log text to save
- * @param {string} status - The status value (e.g., "1", "2")
+ * @param {string} statusVal - The status value (e.g., "1", "2", "3", "4")
  * @returns {Promise<Object>} - The updated parent portfolio dailies object
  */
-export const saveAsinDailyLog = async (asinDailyId, field, log, status) => {
+export const saveAsinDailyLog = async (asinDailyId, field, log, statusVal) => {
   try {
     const url = endpoints.dailies.asinDailyLogSave(asinDailyId, field);
-    const response = await axiosInstance.post(url, { log, status });
+    const payload = {
+      log: log && log.trim() ? log.trim() : '',
+      status: statusVal,
+    };
+    
+    console.log('[API] Saving ASIN Daily Log:', {
+      url,
+      asinDailyId,
+      field,
+      payload,
+      logValue: log,
+      statusVal,
+    });
+    
+    const response = await axiosInstance.post(url, payload);
+    
+    console.log('[API] ASIN Daily Log Save Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+      data: response.data,
+      dataType: typeof response.data,
+      dataKeys: response.data ? Object.keys(response.data) : 'no data',
+      fullResponse: response,
+    });
+    
     return response.data;
   } catch (error) {
-    console.error('[API] Failed to save ASIN daily log:', error);
+    console.error('[API] Failed to save ASIN daily log:', {
+      error,
+      errorResponse: error.response?.data,
+      errorStatus: error.response?.status,
+      url: endpoints.dailies.asinDailyLogSave(asinDailyId, field),
+    });
     throw error;
   }
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -8,6 +8,10 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -38,6 +42,18 @@ export function DailiesDrawer({
   isSaving = false,
 }) {
   const [newLog, setNewLog] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('1'); // Default to OK (1)
+
+  // Reset status when drawer opens/closes or selectedItem changes
+  useEffect(() => {
+    if (selectedItem?.type === 'asin') {
+      // Use current status if available, otherwise default to 1
+      setSelectedStatus(selectedItem.currentStatus?.toString() || '1');
+    } else {
+      // Reset to default for portfolio items
+      setSelectedStatus('1');
+    }
+  }, [selectedItem, open]);
 
   // Group history by date
   const groupedHistory = history.reduce((acc, log) => {
@@ -54,16 +70,76 @@ export function DailiesDrawer({
 
   const handleCancel = () => {
     setNewLog('');
+    setSelectedStatus('1');
     onClose();
   };
 
   const handleSave = async () => {
-    if (newLog.trim() && onSave && !isSaving) {
-      const logText = newLog.trim();
-      setNewLog(''); // Clear input immediately for better UX
-      await onSave(logText);
+    console.log('[Drawer] handleSave called:', {
+      onSave: !!onSave,
+      isSaving,
+      selectedItem,
+      newLog,
+      selectedStatus,
+    });
+
+    if (!onSave || isSaving) {
+      console.log('[Drawer] Cannot save - onSave missing or already saving');
+      return;
+    }
+
+    const isAsinLog = selectedItem?.type === 'asin';
+    const logText = newLog.trim();
+    const hasLogText = logText.length > 0;
+    
+    // For ASIN logs: allow saving if status changed OR log text provided
+    // For portfolio logs: require log text (no status updates)
+    if (isAsinLog) {
+      const initialStatus = selectedItem?.currentStatus?.toString() || '1';
+      const statusChanged = selectedStatus !== initialStatus;
+      
+      console.log('[Drawer] ASIN log save check:', {
+        initialStatus,
+        selectedStatus,
+        statusChanged,
+        hasLogText,
+        logText,
+      });
+      
+      if (statusChanged || hasLogText) {
+        console.log('[Drawer] Saving ASIN log with:', {
+          logText: logText || '',
+          selectedStatus,
+        });
+        setNewLog(''); // Clear input immediately for better UX
+        await onSave(logText || '', selectedStatus);
+      } else {
+        console.log('[Drawer] Nothing to save for ASIN log');
+      }
+    } else {
+      // Portfolio logs require log text
+      if (hasLogText) {
+        console.log('[Drawer] Saving portfolio log with:', { logText });
+        setNewLog(''); // Clear input immediately for better UX
+        await onSave(logText);
+      } else {
+        console.log('[Drawer] Portfolio log requires text');
+      }
     }
   };
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
+  // Status options for dropdown
+  const statusOptions = [
+    { value: '0', label: 'Off', icon: 'solar:power-bold', color: 'disabled' },
+    { value: '1', label: 'OK', icon: 'solar:check-circle-bold', color: 'success.main' },
+    { value: '2', label: 'Warning', icon: 'solar:danger-triangle-bold', color: 'warning.main' },
+    { value: '3', label: 'Error', icon: 'solar:close-circle-bold', color: 'error.main' },
+    { value: '4', label: 'Attention', icon: 'solar:info-circle-bold', color: 'info.main' },
+  ];
 
   const renderHeader = () => {
     if (!selectedItem) return null;
@@ -229,46 +305,181 @@ export function DailiesDrawer({
     );
   };
 
-  const renderInput = () => (
-    <Box
-      sx={{
-        p: 2.5,
-        borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-        bgcolor: 'background.paper',
-      }}
-    >
-      <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
-        Add New Log
-      </Typography>
-      <TextField
-        fullWidth
-        multiline
-        rows={4}
-        value={newLog}
-        onChange={(e) => setNewLog(e.target.value)}
-        placeholder="Enter new log entry..."
-        sx={{ mb: 2 }}
-      />
-      <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
-        <Button
-          variant="outlined"
-          onClick={handleCancel}
-          disabled={isSaving}
-          sx={{ minWidth: 80 }}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          disabled={!newLog.trim() || isSaving}
-          sx={{ minWidth: 80 }}
-        >
-          {isSaving ? 'Saving...' : 'Save'}
-        </Button>
+  const renderInput = () => {
+    const isAsinLog = selectedItem?.type === 'asin';
+
+    return (
+      <Box
+        sx={{
+          p: 2.5,
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
+          Add New Log
+        </Typography>
+        
+        {/* Status Selector for ASIN logs */}
+        {isAsinLog && (
+          <FormControl fullWidth sx={{ mb: 2 }} size="small">
+            <InputLabel id="status-select-label">Status</InputLabel>
+            <Select
+              labelId="status-select-label"
+              id="status-select"
+              value={selectedStatus}
+              label="Status"
+              onChange={handleStatusChange}
+              renderValue={(value) => {
+                const option = statusOptions.find((opt) => opt.value === value);
+                if (!option) return value;
+                const [colorName] = option.color.split('.');
+                return (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: option.value === '0' ? 14 : 'auto',
+                        height: option.value === '0' ? 14 : 'auto',
+                        borderRadius: option.value === '0' ? '50%' : 0,
+                        bgcolor: (theme) => {
+                          // Small gray circular dot for Off status only
+                          if (option.value === '0') return theme.palette.action.selected;
+                          return 'transparent';
+                        },
+                      }}
+                    >
+                      <Iconify 
+                        icon={option.icon} 
+                        width={18} 
+                        sx={{ 
+                          color: (theme) => {
+                            if (option.value === '0') return theme.palette.text.disabled; // Gray for Off
+                            if (colorName === 'success') return theme.palette.success.main;
+                            if (colorName === 'warning') return theme.palette.warning.main;
+                            if (colorName === 'error') return theme.palette.error.main;
+                            if (colorName === 'info') return theme.palette.info.main;
+                            return theme.palette.text.primary;
+                          }
+                        }} 
+                      />
+                    </Box>
+                    <Typography 
+                      variant="body2"
+                      sx={{
+                        color: (theme) => {
+                          // Off (value 0) and OK (value 1) should have black text
+                          if (option.value === '0' || option.value === '1') return theme.palette.text.primary;
+                          // Others match icon color
+                          if (colorName === 'warning') return theme.palette.warning.main;
+                          if (colorName === 'error') return theme.palette.error.main;
+                          if (colorName === 'info') return theme.palette.info.main;
+                          return theme.palette.text.primary;
+                        }
+                      }}
+                    >
+                      {option.label}
+                    </Typography>
+                  </Box>
+                );
+              }}
+            >
+              {statusOptions.map((option) => {
+                const [colorName] = option.color.split('.');
+                return (
+                  <MenuItem key={option.value} value={option.value}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: option.value === '0' ? 14 : 'auto',
+                          height: option.value === '0' ? 14 : 'auto',
+                          borderRadius: option.value === '0' ? '50%' : 0,
+                          bgcolor: (theme) => {
+                            // Small gray circular dot for Off status only
+                            if (option.value === '0') return theme.palette.action.selected;
+                            return 'transparent';
+                          },
+                        }}
+                      >
+                        <Iconify 
+                          icon={option.icon} 
+                          width={18} 
+                          sx={{ 
+                            color: (theme) => {
+                              if (option.value === '0') return theme.palette.text.disabled; // Gray for Off
+                              if (colorName === 'success') return theme.palette.success.main;
+                              if (colorName === 'warning') return theme.palette.warning.main;
+                              if (colorName === 'error') return theme.palette.error.main;
+                              if (colorName === 'info') return theme.palette.info.main;
+                              return theme.palette.text.primary;
+                            }
+                          }} 
+                        />
+                      </Box>
+                      <Typography 
+                        variant="body2"
+                        sx={{
+                          color: (theme) => {
+                            // Off (value 0) and OK (value 1) should have black text
+                            if (option.value === '0' || option.value === '1') return theme.palette.text.primary;
+                            // Others match icon color
+                            if (colorName === 'warning') return theme.palette.warning.main;
+                            if (colorName === 'error') return theme.palette.error.main;
+                            if (colorName === 'info') return theme.palette.info.main;
+                            return theme.palette.text.primary;
+                          }
+                        }}
+                      >
+                        {option.label}
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        )}
+
+        <TextField
+          fullWidth
+          multiline
+          rows={4}
+          value={newLog}
+          onChange={(e) => setNewLog(e.target.value)}
+          placeholder={isAsinLog ? "Enter log entry (optional)..." : "Enter new log entry..."}
+          sx={{ mb: 2 }}
+        />
+        <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
+          <Button
+            variant="outlined"
+            onClick={handleCancel}
+            disabled={isSaving}
+            sx={{ minWidth: 80 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={
+              isSaving ||
+              (isAsinLog
+                ? selectedStatus === (selectedItem?.currentStatus?.toString() || '1') && !newLog.trim()
+                : !newLog.trim())
+            }
+            sx={{ minWidth: 80 }}
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+          </Button>
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+  };
 
   return (
     <Drawer
