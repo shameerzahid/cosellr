@@ -321,7 +321,16 @@ export function DailiesDrawer({
         </Typography>
         
         {/* Status Selector - Enabled for ASIN logs, Disabled for Portfolio logs */}
-        <FormControl fullWidth sx={{ mb: 2 }} size="small" disabled={!isAsinLog}>
+        <FormControl 
+          sx={{ 
+            mb: 2,
+            width: 'auto',
+            minWidth: 120,
+            alignSelf: 'flex-end',
+          }} 
+          size="small" 
+          disabled={!isAsinLog}
+        >
           <InputLabel id="status-select-label">Status</InputLabel>
           <Select
             labelId="status-select-label"
@@ -330,6 +339,22 @@ export function DailiesDrawer({
             label="Status"
             onChange={handleStatusChange}
             disabled={!isAsinLog}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'right',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              PaperProps: {
+                sx: {
+                  minWidth: 140,
+                  maxHeight: 200,
+                },
+              },
+            }}
             renderValue={(value) => {
               const option = statusOptions.find((opt) => opt.value === value);
               if (!option) return value;
@@ -369,17 +394,16 @@ export function DailiesDrawer({
                   <Typography 
                     variant="body2"
                     sx={{
-                      ...(option.value === '0' || option.value === '1'
-                        ? { color: 'text.primary' } // Use string key to ensure theme mode is respected
-                        : {
-                            color: (theme) => {
-                              // Others match icon color
-                              if (colorName === 'warning') return theme.palette.warning.main;
-                              if (colorName === 'error') return theme.palette.error.main;
-                              if (colorName === 'info') return theme.palette.info.main;
-                              return theme.palette.text.primary;
-                            },
-                          }),
+                      // For Off (0) and OK (1), don't set color - let Typography use default theme color
+                      ...(option.value !== '0' && option.value !== '1' && {
+                        color: (theme) => {
+                          // Others match icon color
+                          if (colorName === 'warning') return theme.palette.warning.main;
+                          if (colorName === 'error') return theme.palette.error.main;
+                          if (colorName === 'info') return theme.palette.info.main;
+                          return theme.palette.text.primary;
+                        },
+                      }),
                     }}
                   >
                     {option.label}
@@ -426,17 +450,16 @@ export function DailiesDrawer({
                       <Typography 
                         variant="body2"
                         sx={{
-                          ...(option.value === '0' || option.value === '1'
-                            ? { color: 'text.primary' } // Use string key to ensure theme mode is respected
-                            : {
-                                color: (theme) => {
-                                  // Others match icon color
-                                  if (colorName === 'warning') return theme.palette.warning.main;
-                                  if (colorName === 'error') return theme.palette.error.main;
-                                  if (colorName === 'info') return theme.palette.info.main;
-                                  return theme.palette.text.primary;
-                                },
-                              }),
+                          // For Off (0) and OK (1), don't set color - let Typography use default theme color
+                          ...(option.value !== '0' && option.value !== '1' && {
+                            color: (theme) => {
+                              // Others match icon color
+                              if (colorName === 'warning') return theme.palette.warning.main;
+                              if (colorName === 'error') return theme.palette.error.main;
+                              if (colorName === 'info') return theme.palette.info.main;
+                              return theme.palette.text.primary;
+                            },
+                          }),
                         }}
                       >
                         {option.label}
