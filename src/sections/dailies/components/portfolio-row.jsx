@@ -71,12 +71,15 @@ export function PortfolioRow({ portfolio, onChecklistItemClick }) {
 
   const handleChecklistClick = (fieldId) => {
     if (onChecklistItemClick) {
+      // Get the current status value for this field
+      const currentStatus = checklistStatuses[fieldId];
       onChecklistItemClick({
         type: 'portfolio',
         portfolioDailyId: id,
         field: fieldId,
         portfolioName: portfolio_name,
         marketplaceName: marketplace_name,
+        currentStatus: currentStatus?.toString() || '1', // Convert to string
       });
     }
   };

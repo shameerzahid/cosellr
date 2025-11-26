@@ -46,11 +46,11 @@ export function DailiesDrawer({
 
   // Reset status when drawer opens/closes or selectedItem changes
   useEffect(() => {
-    if (selectedItem?.type === 'asin') {
+    if (selectedItem) {
       // Use current status if available, otherwise default to 1
+      // Works for both ASIN and Portfolio items
       setSelectedStatus(selectedItem.currentStatus?.toString() || '1');
     } else {
-      // Reset to default for portfolio items
       setSelectedStatus('1');
     }
   }, [selectedItem, open]);
@@ -320,22 +320,79 @@ export function DailiesDrawer({
           Add New Log
         </Typography>
         
-        {/* Status Selector for ASIN logs */}
-        {isAsinLog && (
-          <FormControl fullWidth sx={{ mb: 2 }} size="small">
-            <InputLabel id="status-select-label">Status</InputLabel>
-            <Select
-              labelId="status-select-label"
-              id="status-select"
-              value={selectedStatus}
-              label="Status"
-              onChange={handleStatusChange}
-              renderValue={(value) => {
-                const option = statusOptions.find((opt) => opt.value === value);
-                if (!option) return value;
-                const [colorName] = option.color.split('.');
-                return (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Status Selector - Enabled for ASIN logs, Disabled for Portfolio logs */}
+        <FormControl fullWidth sx={{ mb: 2 }} size="small" disabled={!isAsinLog}>
+          <InputLabel id="status-select-label">Status</InputLabel>
+          <Select
+            labelId="status-select-label"
+            id="status-select"
+            value={selectedStatus}
+            label="Status"
+            onChange={handleStatusChange}
+            disabled={!isAsinLog}
+            renderValue={(value) => {
+              const option = statusOptions.find((opt) => opt.value === value);
+              if (!option) return value;
+              const [colorName] = option.color.split('.');
+              return (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: option.value === '0' ? 14 : 'auto',
+                      height: option.value === '0' ? 14 : 'auto',
+                      borderRadius: option.value === '0' ? '50%' : 0,
+                      bgcolor: (theme) => {
+                        // Small gray circular dot for Off status only
+                        if (option.value === '0') return theme.palette.action.selected;
+                        return 'transparent';
+                      },
+                    }}
+                  >
+                    <Iconify 
+                      icon={option.icon} 
+                      width={18} 
+                      sx={{ 
+                        color: (theme) => {
+                          if (option.value === '0') return theme.palette.text.disabled; // Gray for Off
+                          if (colorName === 'success') return theme.palette.success.main;
+                          if (colorName === 'warning') return theme.palette.warning.main;
+                          if (colorName === 'error') return theme.palette.error.main;
+                          if (colorName === 'info') return theme.palette.info.main;
+                          return theme.palette.text.primary;
+                        }
+                      }} 
+                    />
+                  </Box>
+                  <Typography 
+                    variant="body2"
+                    sx={{
+                      ...(option.value === '0' || option.value === '1'
+                        ? { color: 'text.primary' } // Use string key to ensure theme mode is respected
+                        : {
+                            color: (theme) => {
+                              // Others match icon color
+                              if (colorName === 'warning') return theme.palette.warning.main;
+                              if (colorName === 'error') return theme.palette.error.main;
+                              if (colorName === 'info') return theme.palette.info.main;
+                              return theme.palette.text.primary;
+                            },
+                          }),
+                    }}
+                  >
+                    {option.label}
+                  </Typography>
+                </Box>
+              );
+            }}
+          >
+            {statusOptions.map((option) => {
+              const [colorName] = option.color.split('.');
+              return (
+                <MenuItem key={option.value} value={option.value}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <Box
                       sx={{
                         display: 'flex',
@@ -366,84 +423,30 @@ export function DailiesDrawer({
                         }} 
                       />
                     </Box>
-                    <Typography 
-                      variant="body2"
-                      sx={{
-                        color: (theme) => {
-                          // Off (value 0) and OK (value 1) should have black text
-                          if (option.value === '0' || option.value === '1') return theme.palette.text.primary;
-                          // Others match icon color
-                          if (colorName === 'warning') return theme.palette.warning.main;
-                          if (colorName === 'error') return theme.palette.error.main;
-                          if (colorName === 'info') return theme.palette.info.main;
-                          return theme.palette.text.primary;
-                        }
-                      }}
-                    >
-                      {option.label}
-                    </Typography>
-                  </Box>
-                );
-              }}
-            >
-              {statusOptions.map((option) => {
-                const [colorName] = option.color.split('.');
-                return (
-                  <MenuItem key={option.value} value={option.value}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: option.value === '0' ? 14 : 'auto',
-                          height: option.value === '0' ? 14 : 'auto',
-                          borderRadius: option.value === '0' ? '50%' : 0,
-                          bgcolor: (theme) => {
-                            // Small gray circular dot for Off status only
-                            if (option.value === '0') return theme.palette.action.selected;
-                            return 'transparent';
-                          },
-                        }}
-                      >
-                        <Iconify 
-                          icon={option.icon} 
-                          width={18} 
-                          sx={{ 
-                            color: (theme) => {
-                              if (option.value === '0') return theme.palette.text.disabled; // Gray for Off
-                              if (colorName === 'success') return theme.palette.success.main;
-                              if (colorName === 'warning') return theme.palette.warning.main;
-                              if (colorName === 'error') return theme.palette.error.main;
-                              if (colorName === 'info') return theme.palette.info.main;
-                              return theme.palette.text.primary;
-                            }
-                          }} 
-                        />
-                      </Box>
                       <Typography 
                         variant="body2"
                         sx={{
-                          color: (theme) => {
-                            // Off (value 0) and OK (value 1) should have black text
-                            if (option.value === '0' || option.value === '1') return theme.palette.text.primary;
-                            // Others match icon color
-                            if (colorName === 'warning') return theme.palette.warning.main;
-                            if (colorName === 'error') return theme.palette.error.main;
-                            if (colorName === 'info') return theme.palette.info.main;
-                            return theme.palette.text.primary;
-                          }
+                          ...(option.value === '0' || option.value === '1'
+                            ? { color: 'text.primary' } // Use string key to ensure theme mode is respected
+                            : {
+                                color: (theme) => {
+                                  // Others match icon color
+                                  if (colorName === 'warning') return theme.palette.warning.main;
+                                  if (colorName === 'error') return theme.palette.error.main;
+                                  if (colorName === 'info') return theme.palette.info.main;
+                                  return theme.palette.text.primary;
+                                },
+                              }),
                         }}
                       >
                         {option.label}
                       </Typography>
-                    </Box>
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        )}
+                  </Box>
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
 
         <TextField
           fullWidth

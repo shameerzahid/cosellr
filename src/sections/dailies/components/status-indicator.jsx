@@ -133,15 +133,17 @@ export function StatusIndicator({ status, clickable = true, onClick, fieldLabel 
         sx={{
           fontSize: '0.75rem',
           fontWeight: 600,
-          color: (theme) => {
-            // Off (status 0) and OK (status 1) should have black text
-            if (status === 0 || status === 1) return theme.palette.text.primary;
-            // Others match icon color
-            if (color === 'warning') return theme.palette.warning.main;
-            if (color === 'error') return theme.palette.error.main;
-            if (color === 'info') return theme.palette.info.main;
-            return theme.palette.text.disabled;
-          },
+          ...(status === 0 || status === 1
+            ? { color: 'text.primary' } // Use string key to ensure theme mode is respected
+            : {
+                color: (theme) => {
+                  // Others match icon color
+                  if (color === 'warning') return theme.palette.warning.main;
+                  if (color === 'error') return theme.palette.error.main;
+                  if (color === 'info') return theme.palette.info.main;
+                  return theme.palette.text.disabled;
+                },
+              }),
         }}
       >
         {statusText}
