@@ -321,16 +321,15 @@ export function DailiesDrawer({
         </Typography>
         
         {/* Status Selector - Enabled for ASIN logs, Disabled for Portfolio logs */}
-        <FormControl 
-          sx={{ 
-            mb: 2,
-            width: 'auto',
-            minWidth: 120,
-            alignSelf: 'flex-end',
-          }} 
-          size="small" 
-          disabled={!isAsinLog}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FormControl 
+            sx={{ 
+              width: 'auto',
+              minWidth: 120,
+            }} 
+            size="small" 
+            disabled={!isAsinLog}
+          >
           <InputLabel id="status-select-label">Status</InputLabel>
           <Select
             labelId="status-select-label"
@@ -470,6 +469,7 @@ export function DailiesDrawer({
             })}
           </Select>
         </FormControl>
+        </Box>
 
         <TextField
           fullWidth
